@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双标签选择组件与乘积显示</title>
+    <style>
+        .component {
+            margin-bottom: 30px;
+        }
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .tag {
+            padding: 5px 10px;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .tag.selected {
+            background-color: #007bff;
+            color: white;
+        }
+        .selected-value {
+            margin-top: 10px;
+        }
+        #productDisplay {
+            margin-top: 30px;
+            padding: 20px;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="component" id="component1">
+        <h3>组件 1</h3>
+        <div class="tag-container" id="tagContainer1"></div>
+        <div class="selected-value" id="selectedValue1"></div>
+    </div>
+
+    <div class="component" id="component2">
+        <h3>组件 2</h3>
+        <div class="tag-container" id="tagContainer2"></div>
+        <div class="selected-value" id="selectedValue2"></div>
+    </div>
+
+    <div id="productDisplay">乘积: 0</div>
+
+    <script>
+        const tags = [
+            { name: "标签1", value: 10 },
+            { name: "标签2", value: 20 },
+            { name: "标签3", value: 30 },
+            { name: "标签4", value: 40 },
+            { name: "标签5", value: 50 }
+        ];
+
+        let selectedValues = {
+            component1: 0,
+            component2: 0
+        };
+
+        function updateProduct() {
+            const product = selectedValues.component1 * selectedValues.component2;
+            document.getElementById('productDisplay').textContent = `乘积: ${product}`;
+        }
+
+        function createTagSelector(containerId, valueDisplayId, componentKey) {
+            const tagContainer = document.getElementById(containerId);
+            const selectedValueDisplay = document.getElementById(valueDisplayId);
+
+            tags.forEach(tag => {
+                const tagElement = document.createElement('div');
+                tagElement.className = 'tag';
+                tagElement.textContent = tag.name;
+                tagElement.dataset.value = tag.value;
+
+                tagElement.addEventListener('click', function() {
+                    tagContainer.querySelectorAll('.tag').forEach(t => t.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedValueDisplay.textContent = `选中的值: ${this.dataset.value}`;
+                    selectedValues[componentKey] = parseInt(this.dataset.value);
+                    updateProduct();
+                });
+
+                tagContainer.appendChild(tagElement);
+            });
+        }
+
+        createTagSelector('tagContainer1', 'selectedValue1', 'component1');
+        createTagSelector('tagContainer2', 'selectedValue2', 'component2');
+    </script>
+</body>
+</html>
